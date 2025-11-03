@@ -116,6 +116,8 @@ const LANGUAGE_CONFIG = {
  * Also manages the optional time-based trigger.
  */
 function loopThroughContacts() {
+  const startTime = new Date();
+
   if (CONFIG.useTrigger) {
     ensureTriggerExists();
   } else {
@@ -240,7 +242,11 @@ function loopThroughContacts() {
     Logger.log(`⏰ Reminders disabled`);
   }
   
-  Logger.log("🎉 Processing completed successfully!");
+  const endTime = new Date();
+  const durationMs = endTime.getTime() - startTime.getTime();
+  const endMessage = `🎉 Birthdays calendar sync completed successfully (${durationMs} ms)!`;
+  sendNtfyNotification(endMessage);
+  Logger.log(endMessage);
 }
 
 /**
@@ -883,5 +889,53 @@ function removeTriggerIfExists() {
       ScriptApp.deleteTrigger(trigger);
       Logger.log("🗑️ Removed existing trigger");
     }
+  }
+}
+
+function sendNtfyNotification(messageBody, messageTitle = 'Google Script', priority = 'default') {
+  
+  // --- CONFIGURATION START ---
+  const properties = PropertiesService.getScriptProperties();
+  const NTFY_SERVER_URL = properties.getProperty('NTFY_SERVER_URL');
+  const NTFY_TOPIC = properties.getProperty('NTFY_TOPIC');         
+  const NTFY_TOKEN  = properties.getProperty('NTFY_TOKEN');
+  // --- CONFIGURATION END ---
+
+  if (!NTFY_SERVER_URL || !NTFY_TOPIC || !NTFY_TOKEN) {
+    Logger.log('ERROR: ntfy server url, topic or bearer token not configured in the script properties.');
+    return;
+  }
+
+  const url = `${NTFY_SERVER_URL}/${NTFY_TOPIC}`;
+  
+  // 1. Prepare Authentication Header
+  let headers = {};
+  headers['Authorization'] = `Bearer ${NTFY_TOKEN}`;
+
+  // 2. Prepare the Request Options
+  // ntfy allows publishing via HTTP Headers, which is often cleaner than a JSON payload
+  headers['Title'] = messageTitle;
+  headers['Priority'] = priority;
+  
+  const options = {
+    method: 'post',
+    headers: headers,
+    payload: messageBody, // The message content is sent as the request body
+    muteHttpExceptions: true // Don't throw an error on 4xx/5xx response codes
+  };
+  
+  // 3. Send the Request
+  try {
+    const response = UrlFetchApp.fetch(url, options);
+    const responseCode = response.getResponseCode();
+    
+    if (responseCode === 200) {
+      Logger.log(`ntfy notification sent successfully.`);
+    } else {
+      Logger.log(`ntfy Error: Status ${responseCode}. Response: ${response.getContentText()}`);
+    }
+    
+  } catch (e) {
+    Logger.log(`FATAL ntfy ERROR: ${e.toString()}`);
   }
 }
