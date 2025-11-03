@@ -3,6 +3,9 @@
  * Version: 1.0
  ******************************/
 const CONFIG = {
+  // Cleanup
+  cleanupEvents: false,              // ⚠️⚠️⚠️ Deletes all matching birthday events between ±100 years
+  
   calendarId: scriptProperties.getProperty('CALENDAR_ID'),            // 'primary' or your calendar ID
 
   // Title customization
@@ -23,9 +26,6 @@ const CONFIG = {
   useReminders: true,                // Enable/disable reminders for birthday events
   reminderMinutesBefore: 360,       // Popup reminder time (in minutes) - only used if useReminders is true
                                      // Common values: 0 = at event time, 60 = 1 hour before, 1440 = 1 day before, 10080 = 1 week before
-
-  // Cleanup
-  cleanupEvents: false,              // ⚠️⚠️⚠️ Deletes all matching birthday events between ±100 years
 
   // Trigger options
   useTrigger: true,                  // Automatically run on a schedule
