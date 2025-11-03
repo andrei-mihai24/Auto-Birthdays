@@ -3,16 +3,16 @@
  * Version: 1.0
  ******************************/
 const CONFIG = {
-  calendarId: 'primary',            // 'primary' or your calendar ID
+  calendarId: scriptProperties.getProperty('CALENDAR_ID'),            // 'primary' or your calendar ID
 
   // Title customization
   useEmoji: true,                    // Add 🎂 emoji to event titles
   showYearOrAge: true,               // Recurrence on: shows (*YYYY), off: shows (age)
-  showAgeOnRecurring: false,         // If true, shows (age) on recurring events instead of (*YYYY)
+  showAgeOnRecurring: true,         // If true, shows (age) on recurring events instead of (*YYYY)
   
   // Language and localization
   language: 'en',                    // Language code: 'en' (English), 'it' (Italian), 'fr' (French), 'de' (German), 'es' (Spanish)
-  titleFormat: '',                   // Title format template (see LANGUAGE_CONFIG for placeholders), e.g. {emoji}{name} ({ageOrYear})
+  titleFormat: '{emoji}{name} ({ageOrYear})',                   // Title format template (see LANGUAGE_CONFIG for placeholders), e.g. {emoji}{name} ({ageOrYear})
 
   // Recurrence
   useRecurrence: true,               // Create recurring yearly events
@@ -21,7 +21,7 @@ const CONFIG = {
 
   // Reminder settings
   useReminders: true,                // Enable/disable reminders for birthday events
-  reminderMinutesBefore: 1440,       // Popup reminder time (in minutes) - only used if useReminders is true
+  reminderMinutesBefore: 360,       // Popup reminder time (in minutes) - only used if useReminders is true
                                      // Common values: 0 = at event time, 60 = 1 hour before, 1440 = 1 day before, 10080 = 1 week before
 
   // Cleanup
@@ -33,7 +33,7 @@ const CONFIG = {
   triggerHour: 4,                    // If 'daily', the hour of day to run (0–23)
 
   // Script identification
-  scriptKey: 'CREATED_BY_Auto-Birthdays', // Unique identifier for events created by this script; customize if desired
+  scriptKey: 'CREATED_BY_SCRIPT', // Unique identifier for events created by this script; customize if desired
 
   // Contact label filtering (optional)
   useLabels: false,                  // Enable filtering contacts by labels
